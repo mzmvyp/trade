@@ -1,8 +1,9 @@
-# integrated_app.py - Aplicação Completa Integrada
+# app.py - Aplicação Principal Corrigida para Windows
 import json
 import time
 import threading
 import os
+import sys
 from datetime import datetime, timedelta
 import requests
 from collections import deque
@@ -10,10 +11,80 @@ import sqlite3
 from flask import Flask, render_template, jsonify, request
 import logging
 
-# Importa componentes existentes
-from trading_analyzer import TradingAnalyzer
+# Configurar encoding para Windows
+if sys.platform.startswith('win'):
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
 
-# ==================== BITCOIN DATA STREAMER (do projeto original) ====================
+# Importa o trading analyzer corrigido
+try:
+    from trading_analyzer import TradingAnalyzer
+except ImportError as e:
+    print(f"ERRO: Não foi possível importar trading_analyzer: {e}")
+    print("Certifique-se de que o arquivo trading_analyzer.py está no mesmo diretório.")
+    sys.exit(1)
+
+# Configurar logging sem emojis para compatibilidade Windows
+class WindowsCompatibleFormatter(logging.Formatter):
+    """Formatter que remove caracteres Unicode problemáticos no Windows"""
+    
+    def format(self, record):
+        # Remove emojis e caracteres Unicode problemáticos
+        msg = super().format(record)
+        # Substitui emojis por texto simples
+        emoji_replacements = {
+            '🚀': '[START]',
+            '📊': '[DATA]',
+            '✅': '[OK]',
+            '❌': '[ERROR]',
+            '🛑': '[STOP]',
+            '💰': '[BTC]',
+            '📈': '[TRADE]',
+            '🔄': '[API]',
+            '⚙️': '[CTRL]',
+            '🎯': '[TARGET]',
+            '🧹': '[CLEAN]',
+            '📝': '[SAMPLE]',
+            '🔧': '[FIX]',
+            '⏰': '[TIME]',
+            '🎯': '[HIT]'
+        }
+        
+        for emoji, replacement in emoji_replacements.items():
+            msg = msg.replace(emoji, replacement)
+        
+        return msg
+
+# Configurar logging
+def setup_logging():
+    """Configura logging compatível com Windows"""
+    os.makedirs('data', exist_ok=True)
+    
+    # Formatter personalizado
+    formatter = WindowsCompatibleFormatter(
+        '%(asctime)s - %(levelname)s - %(message)s'
+    )
+    
+    # Handler para arquivo
+    file_handler = logging.FileHandler('data/trading_system.log', encoding='utf-8')
+    file_handler.setFormatter(formatter)
+    
+    # Handler para console
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    
+    # Configurar logger root
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    
+    return logger
+
+logger = setup_logging()
+
+# ==================== BITCOIN DATA MODELS ====================
 class BitcoinData:
     """Modelo para dados do Bitcoin"""
     def __init__(self, timestamp, price, volume_24h, market_cap, price_change_24h, source):
@@ -34,24 +105,141 @@ class BitcoinData:
             'source': self.source
         }
 
-class BitcoinDataStreamer:
-    """Stream de dados Bitcoin (do projeto original)"""
+# ==================== DATABASE MIGRATION ====================
+def migrate_database(db_path):
+    """Migra banco de dados para nova estrutura"""
+    logger.info("[MIGRATION] Verificando e migrando banco de dados...")
     
-    def __init__(self):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    try:
+        # Verifica se a coluna data_hash existe
+        cursor.execute("PRAGMA table_info(bitcoin_stream)")
+        columns = [column[1] for column in cursor.fetchall()]
+        
+        if 'data_hash' not in columns:
+            logger.info("[MIGRATION] Adicionando coluna data_hash...")
+            cursor.execute('ALTER TABLE bitcoin_stream ADD COLUMN data_hash TEXT')
+            
+            # Atualiza registros existentes com hash
+            cursor.execute('SELECT id, timestamp, price, source FROM bitcoin_stream')
+            rows = cursor.fetchall()
+            
+            for row in rows:
+                import hashlib
+                hash_string = f"{row[1]}_{row[2]}_{row[3]}"
+                data_hash = hashlib.md5(hash_string.encode()).hexdigest()[:16]
+                cursor.execute('UPDATE bitcoin_stream SET data_hash = ? WHERE id = ?', 
+                             (data_hash, row[0]))
+            
+            logger.info(f"[MIGRATION] Atualizados {len(rows)} registros com hash")
+        
+        # Verifica índices
+        cursor.execute("PRAGMA index_list(bitcoin_stream)")
+        existing_indexes = [idx[1] for idx in cursor.fetchall()]
+        
+        indexes_to_create = [
+            ('idx_timestamp', 'CREATE INDEX IF NOT EXISTS idx_timestamp ON bitcoin_stream(timestamp)'),
+            ('idx_data_hash', 'CREATE INDEX IF NOT EXISTS idx_data_hash ON bitcoin_stream(data_hash)'),
+            ('idx_source', 'CREATE INDEX IF NOT EXISTS idx_source ON bitcoin_stream(source)')
+        ]
+        
+        for idx_name, idx_sql in indexes_to_create:
+            if idx_name not in existing_indexes:
+                logger.info(f"[MIGRATION] Criando índice {idx_name}...")
+                cursor.execute(idx_sql)
+        
+        conn.commit()
+        logger.info("[MIGRATION] Migração concluída com sucesso")
+        
+    except Exception as e:
+        logger.error(f"[MIGRATION] Erro na migração: {e}")
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+# ==================== ENHANCED BITCOIN DATA STREAMER ====================
+class BitcoinDataStreamer:
+    """Stream de dados Bitcoin com controle de duplicidade"""
+    
+    def __init__(self, max_queue_size=1000):
         self.is_running = False
-        self.data_queue = deque(maxlen=1000)
+        self.data_queue = deque(maxlen=max_queue_size)
         self.subscribers = []
+        self.last_fetch_time = {}
+        self.fetch_intervals = {
+            'coingecko': 10,
+            'binance': 5
+        }
+        self.api_errors = {'coingecko': 0, 'binance': 0}
+        self.max_consecutive_errors = 3
+        self.last_successful_price = None
         
     def add_subscriber(self, callback):
-        """Adiciona subscriber"""
-        self.subscribers.append(callback)
+        """Adiciona subscriber para receber dados"""
+        if callback not in self.subscribers:
+            self.subscribers.append(callback)
+            logger.info(f"Novo subscriber adicionado. Total: {len(self.subscribers)}")
+        
+    def remove_subscriber(self, callback):
+        """Remove subscriber"""
+        if callback in self.subscribers:
+            self.subscribers.remove(callback)
+            logger.info(f"Subscriber removido. Total: {len(self.subscribers)}")
+    
+    def _can_fetch_from_api(self, api_name):
+        """Verifica se pode fazer fetch da API"""
+        if api_name not in self.last_fetch_time:
+            return True
+        
+        interval = self.fetch_intervals.get(api_name, 10)
+        time_since_last = time.time() - self.last_fetch_time[api_name]
+        return time_since_last >= interval
+    
+    def _mark_api_fetch(self, api_name):
+        """Marca que fez fetch da API"""
+        self.last_fetch_time[api_name] = time.time()
+    
+    def _handle_api_error(self, api_name, error):
+        """Trata erros de API"""
+        self.api_errors[api_name] = self.api_errors.get(api_name, 0) + 1
+        logger.error(f"Erro na API {api_name} (#{self.api_errors[api_name]}): {error}")
+        
+        if self.api_errors[api_name] >= self.max_consecutive_errors:
+            logger.warning(f"API {api_name} desabilitada temporariamente devido a erros consecutivos")
+    
+    def _reset_api_errors(self, api_name):
+        """Reseta contador de erros da API"""
+        if self.api_errors.get(api_name, 0) > 0:
+            logger.info(f"API {api_name} recuperada - resetando contador de erros")
+        self.api_errors[api_name] = 0
         
     def _fetch_coingecko_data(self):
         """Busca dados da API CoinGecko"""
+        if not self._can_fetch_from_api('coingecko'):
+            return None
+            
+        if self.api_errors.get('coingecko', 0) >= self.max_consecutive_errors:
+            return None
+        
         try:
-            url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true"
-            response = requests.get(url, timeout=10)
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            params = {
+                'ids': 'bitcoin',
+                'vs_currencies': 'usd',
+                'include_24hr_change': 'true',
+                'include_24hr_vol': 'true',
+                'include_market_cap': 'true'
+            }
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
             data = response.json()
+            
+            self._mark_api_fetch('coingecko')
+            self._reset_api_errors('coingecko')
             
             bitcoin_info = data['bitcoin']
             return BitcoinData(
@@ -62,86 +250,185 @@ class BitcoinDataStreamer:
                 price_change_24h=bitcoin_info.get('usd_24h_change', 0),
                 source='coingecko'
             )
+            
         except Exception as e:
-            logging.error(f"Erro ao buscar dados CoinGecko: {e}")
+            self._handle_api_error('coingecko', str(e))
             return None
     
     def _fetch_binance_data(self):
         """Busca dados da API Binance"""
+        if not self._can_fetch_from_api('binance'):
+            return None
+            
+        if self.api_errors.get('binance', 0) >= self.max_consecutive_errors:
+            return None
+        
         try:
-            url = "https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"
-            response = requests.get(url, timeout=10)
+            url = "https://api.binance.com/api/v3/ticker/24hr"
+            params = {'symbol': 'BTCUSDT'}
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
             data = response.json()
+            
+            self._mark_api_fetch('binance')
+            self._reset_api_errors('binance')
             
             return BitcoinData(
                 timestamp=datetime.now(),
                 price=float(data['lastPrice']),
-                volume_24h=float(data['volume']),
+                volume_24h=float(data['volume']) * float(data['lastPrice']),
                 market_cap=0,
                 price_change_24h=float(data['priceChangePercent']),
                 source='binance'
             )
+            
         except Exception as e:
-            logging.error(f"Erro ao buscar dados Binance: {e}")
+            self._handle_api_error('binance', str(e))
             return None
     
+    def _validate_price_data(self, data):
+        """Valida dados de preço"""
+        if not data or data.price <= 0:
+            return False
+        
+        if self.last_successful_price:
+            price_change_pct = abs(data.price - self.last_successful_price) / self.last_successful_price
+            if price_change_pct > 0.10:
+                logger.warning(f"Preço rejeitado - variação muito grande: ${self.last_successful_price:.2f} -> ${data.price:.2f}")
+                return False
+        
+        if not (20000 <= data.price <= 200000):
+            logger.warning(f"Preço rejeitado - fora da faixa esperada: ${data.price:.2f}")
+            return False
+        
+        return True
+    
+    def _is_duplicate_data(self, new_data):
+        """Verifica duplicatas"""
+        if not self.data_queue:
+            return False
+        
+        last_data = self.data_queue[-1]
+        time_diff = (new_data.timestamp - last_data.timestamp).total_seconds()
+        same_price = abs(new_data.price - last_data.price) < 0.01
+        same_source = new_data.source == last_data.source
+        
+        return same_price and same_source and time_diff < 2
+    
     def start_streaming(self):
-        """Inicia o streaming"""
+        """Inicia streaming"""
+        if self.is_running:
+            logger.warning("Streaming já está em execução")
+            return
+        
         self.is_running = True
+        logger.info("[START] Iniciando Bitcoin Data Streaming...")
         
         def stream_worker():
+            consecutive_failures = 0
+            max_failures = 10
+            api_rotation = 0
+            
             while self.is_running:
                 try:
-                    # Alterna entre APIs
-                    if time.time() % 2 == 0:
+                    data = None
+                    
+                    if api_rotation % 2 == 0:
                         data = self._fetch_coingecko_data()
+                        if not data:
+                            data = self._fetch_binance_data()
                     else:
                         data = self._fetch_binance_data()
+                        if not data:
+                            data = self._fetch_coingecko_data()
                     
-                    if data:
+                    api_rotation += 1
+                    
+                    if data and self._validate_price_data(data) and not self._is_duplicate_data(data):
                         self.data_queue.append(data)
+                        self.last_successful_price = data.price
                         
-                        # Notifica subscribers
-                        for callback in self.subscribers:
+                        for callback in self.subscribers[:]:
                             try:
                                 callback(data)
                             except Exception as e:
-                                logging.error(f"Erro no subscriber: {e}")
+                                logger.error(f"Erro no subscriber: {e}")
+                                self.remove_subscriber(callback)
+                        
+                        consecutive_failures = 0
+                        logger.debug(f"Dados coletados: ${data.price:.2f} ({data.source})")
+                        
+                    elif data and self._is_duplicate_data(data):
+                        logger.debug(f"Dados duplicados ignorados: ${data.price:.2f}")
                     
-                    time.sleep(5)  # Coleta a cada 5 segundos
+                    else:
+                        consecutive_failures += 1
+                        if consecutive_failures >= max_failures:
+                            logger.error(f"Muitas falhas consecutivas ({consecutive_failures}). Pausando...")
+                            time.sleep(60)
+                            consecutive_failures = 0
+                    
+                    time.sleep(3)
                     
                 except Exception as e:
-                    logging.error(f"Erro no streaming: {e}")
+                    consecutive_failures += 1
+                    logger.error(f"Erro crítico no streaming: {e}")
                     time.sleep(10)
+            
+            logger.info("[DATA] Bitcoin Data Streaming finalizado")
         
-        thread = threading.Thread(target=stream_worker)
-        thread.daemon = True
-        thread.start()
+        stream_thread = threading.Thread(target=stream_worker, daemon=True)
+        stream_thread.start()
         
     def stop_streaming(self):
-        """Para o streaming"""
+        """Para streaming"""
+        if not self.is_running:
+            logger.warning("Streaming não está em execução")
+            return
+        
         self.is_running = False
+        logger.info("[STOP] Parando Bitcoin Data Streaming...")
         
     def get_recent_data(self, limit=100):
         """Retorna dados recentes"""
         return list(self.data_queue)[-limit:]
+    
+    def get_stream_statistics(self):
+        """Estatísticas do stream"""
+        return {
+            'is_running': self.is_running,
+            'total_data_points': len(self.data_queue),
+            'api_errors': dict(self.api_errors),
+            'last_fetch_times': dict(self.last_fetch_time),
+            'last_price': self.last_successful_price,
+            'queue_size': len(self.data_queue),
+            'subscribers_count': len(self.subscribers)
+        }
 
 # ==================== BITCOIN STREAM PROCESSOR ====================
 class BitcoinStreamProcessor:
-    """Processador de dados Bitcoin (do projeto original)"""
+    """Processador com migração automática"""
     
     def __init__(self, db_path="data/bitcoin_stream.db"):
         self.db_path = db_path
-        self.batch_size = 10
+        self.batch_size = 20
         self.batch_buffer = []
+        self.last_processed_hash = None
+        self.processing_lock = threading.Lock()
         self.init_database()
         
     def init_database(self):
-        """Inicializa banco de dados"""
+        """Inicializa banco com migração"""
         os.makedirs('data', exist_ok=True)
+        
+        # Verifica se banco existe
+        db_exists = os.path.exists(self.db_path)
+        
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
+        # Cria tabelas base
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS bitcoin_stream (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -173,65 +460,128 @@ class BitcoinStreamProcessor:
         conn.commit()
         conn.close()
         
-    def process_stream_data(self, data):
-        """Processa dados do stream"""
-        self.batch_buffer.append(data)
+        # Executa migração se necessário
+        if db_exists:
+            migrate_database(self.db_path)
+        else:
+            # Banco novo - adiciona coluna data_hash direto
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute('ALTER TABLE bitcoin_stream ADD COLUMN data_hash TEXT')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_timestamp ON bitcoin_stream(timestamp)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_data_hash ON bitcoin_stream(data_hash)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_source ON bitcoin_stream(source)')
+            conn.commit()
+            conn.close()
         
-        if len(self.batch_buffer) >= self.batch_size:
-            self._process_batch()
+    def _generate_data_hash(self, data):
+        """Gera hash único"""
+        import hashlib
+        hash_string = f"{data.timestamp.isoformat()}_{data.price}_{data.source}"
+        return hashlib.md5(hash_string.encode()).hexdigest()[:16]
+        
+    def process_stream_data(self, data):
+        """Processa dados com controle de duplicidade"""
+        with self.processing_lock:
+            data_hash = self._generate_data_hash(data)
             
+            if data_hash == self.last_processed_hash:
+                logger.debug(f"Dados duplicados ignorados: {data_hash}")
+                return
+            
+            self.batch_buffer.append((data, data_hash))
+            self.last_processed_hash = data_hash
+            
+            if len(self.batch_buffer) >= self.batch_size:
+                self._process_batch()
+                
     def _process_batch(self):
-        """Processa lote de dados"""
+        """Processa lote"""
         if not self.batch_buffer:
             return
             
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Insere dados brutos
-        for data in self.batch_buffer:
-            cursor.execute('''
-                INSERT INTO bitcoin_stream 
-                (timestamp, price, volume_24h, market_cap, price_change_24h, source)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (
-                data.timestamp, data.price, data.volume_24h,
-                data.market_cap, data.price_change_24h, data.source
-            ))
+        inserted_count = 0
         
-        # Analytics
-        window_start = min(d.timestamp for d in self.batch_buffer)
-        window_end = max(d.timestamp for d in self.batch_buffer)
-        
-        prices = [d.price for d in self.batch_buffer]
-        volumes = [d.volume_24h for d in self.batch_buffer if d.volume_24h > 0]
-        
-        if prices:
-            avg_price = sum(prices) / len(prices)
-            min_price = min(prices)
-            max_price = max(prices)
-            price_volatility = (max_price - min_price) / avg_price * 100
-            total_volume = sum(volumes) if volumes else 0
+        try:
+            for data, data_hash in self.batch_buffer:
+                try:
+                    cursor.execute('''
+                        INSERT INTO bitcoin_stream 
+                        (timestamp, price, volume_24h, market_cap, price_change_24h, source, data_hash)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        data.timestamp, data.price, data.volume_24h,
+                        data.market_cap, data.price_change_24h, data.source, data_hash
+                    ))
+                    inserted_count += 1
+                    
+                except sqlite3.IntegrityError as e:
+                    if "UNIQUE constraint failed" in str(e):
+                        logger.debug(f"Dados duplicados no banco: {data_hash}")
+                    else:
+                        logger.error(f"Erro de integridade: {e}")
+                        
+            if inserted_count > 0:
+                self._update_analytics(cursor)
+            
+            conn.commit()
+            
+            if inserted_count > 0:
+                logger.info(f"[DATA] Processado lote: {inserted_count}/{len(self.batch_buffer)} inseridos")
+            
+        except Exception as e:
+            logger.error(f"Erro ao processar lote: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
+            self.batch_buffer.clear()
+    
+    def _update_analytics(self, cursor):
+        """Atualiza analytics"""
+        try:
+            one_hour_ago = datetime.now() - timedelta(hours=1)
             
             cursor.execute('''
-                INSERT INTO bitcoin_analytics 
-                (window_start, window_end, avg_price, min_price, max_price, 
-                 price_volatility, total_volume, data_points)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                window_start, window_end, avg_price, min_price, max_price,
-                price_volatility, total_volume, len(self.batch_buffer)
-            ))
-        
-        conn.commit()
-        conn.close()
-        
-        logging.info(f"Processado lote de {len(self.batch_buffer)} registros")
-        self.batch_buffer.clear()
+                SELECT price, volume_24h, timestamp
+                FROM bitcoin_stream 
+                WHERE timestamp > ?
+                ORDER BY timestamp
+            ''', (one_hour_ago,))
+            
+            recent_data = cursor.fetchall()
+            
+            if len(recent_data) > 0:
+                prices = [row[0] for row in recent_data]
+                volumes = [row[1] for row in recent_data if row[1] > 0]
+                
+                window_start = min(row[2] for row in recent_data)
+                window_end = max(row[2] for row in recent_data)
+                
+                avg_price = sum(prices) / len(prices)
+                min_price = min(prices)
+                max_price = max(prices)
+                price_volatility = ((max_price - min_price) / avg_price * 100) if avg_price > 0 else 0
+                total_volume = sum(volumes) if volumes else 0
+                
+                cursor.execute('''
+                    INSERT INTO bitcoin_analytics 
+                    (window_start, window_end, avg_price, min_price, max_price, 
+                     price_volatility, total_volume, data_points)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    window_start, window_end, avg_price, min_price, max_price,
+                    price_volatility, total_volume, len(recent_data)
+                ))
+                
+        except Exception as e:
+            logger.error(f"Erro ao atualizar analytics: {e}")
 
 # ==================== BITCOIN ANALYTICS ENGINE ====================
 class BitcoinAnalyticsEngine:
-    """Engine de analytics Bitcoin (do projeto original)"""
+    """Engine de analytics"""
     
     def __init__(self, db_path="data/bitcoin_stream.db"):
         self.db_path = db_path
@@ -249,7 +599,8 @@ class BitcoinAnalyticsEngine:
                 AVG(price) as avg_price,
                 MIN(price) as min_price,
                 MAX(price) as max_price,
-                AVG(price_change_24h) as avg_change
+                AVG(price_change_24h) as avg_change,
+                MAX(timestamp) as last_update
             FROM bitcoin_stream 
             WHERE timestamp > ?
         ''', (five_min_ago,))
@@ -265,7 +616,7 @@ class BitcoinAnalyticsEngine:
                 'max_price': round(result[3], 2),
                 'avg_change_24h': round(result[4], 2),
                 'price_range': round(result[3] - result[2], 2),
-                'last_update': datetime.now().isoformat()
+                'last_update': result[5] or datetime.now().isoformat()
             }
         else:
             return {
@@ -280,181 +631,140 @@ class BitcoinAnalyticsEngine:
 
 # ==================== INTEGRATED CONTROLLER ====================
 class IntegratedController:
-    """Controller principal que integra Bitcoin Pipeline + Trading Analyzer"""
+    """Controller principal"""
     
     def __init__(self):
         self.app = Flask(__name__)
         
-        # Componentes Bitcoin Pipeline
+        # Componentes
         self.bitcoin_streamer = BitcoinDataStreamer()
         self.bitcoin_processor = BitcoinStreamProcessor()
         self.bitcoin_analytics = BitcoinAnalyticsEngine()
-        
-        # Componente Trading Analyzer
         self.trading_analyzer = TradingAnalyzer()
         
-        # Conecta pipeline com analyzer
+        # Controle de debounce
+        self.last_trading_update = 0
+        self.trading_update_interval = 2
+        
+        # Conecta pipeline
         self.bitcoin_streamer.add_subscriber(self.bitcoin_processor.process_stream_data)
-        self.bitcoin_streamer.add_subscriber(self._feed_trading_analyzer)
+        self.bitcoin_streamer.add_subscriber(self._feed_trading_analyzer_debounced)
         
         self.setup_routes()
         
-    def _feed_trading_analyzer(self, bitcoin_data):
-        """Alimenta o trading analyzer com dados do Bitcoin"""
+    def _feed_trading_analyzer_debounced(self, bitcoin_data):
+        """Alimenta trading analyzer com debounce"""
+        current_time = time.time()
+        
+        if current_time - self.last_trading_update < self.trading_update_interval:
+            return
+        
         try:
             self.trading_analyzer.add_price_data(
                 timestamp=bitcoin_data.timestamp,
                 price=bitcoin_data.price,
                 volume=bitcoin_data.volume_24h
             )
+            self.last_trading_update = current_time
+            
         except Exception as e:
-            logging.error(f"Erro ao alimentar trading analyzer: {e}")
+            logger.error(f"Erro ao alimentar trading analyzer: {e}")
         
     def setup_routes(self):
-        """Configura todas as rotas da aplicação"""
+        """Configura rotas"""
         
-        # ==================== ROTAS PRINCIPAIS ====================
         @self.app.route('/')
         def dashboard():
-            """Dashboard integrado principal"""
             return render_template('integrated_dashboard.html')
         
         @self.app.route('/bitcoin')
         def bitcoin_dashboard():
-            """Dashboard apenas Bitcoin"""
             return render_template('bitcoin_dashboard.html')
             
         @self.app.route('/trading')
         def trading_dashboard():
-            """Dashboard apenas Trading"""
             return render_template('trading_dashboard.html')
         
-        # ==================== ROTAS BITCOIN PIPELINE ====================
         @self.app.route('/api/bitcoin/start-stream', methods=['POST'])
         def start_bitcoin_stream():
-            """Inicia streaming Bitcoin"""
-            self.bitcoin_streamer.start_streaming()
-            return jsonify({'status': 'started'})
+            try:
+                self.bitcoin_streamer.start_streaming()
+                logger.info("[OK] Bitcoin streaming iniciado via API")
+                return jsonify({'status': 'started', 'message': 'Bitcoin streaming iniciado'})
+            except Exception as e:
+                logger.error(f"Erro ao iniciar streaming: {e}")
+                return jsonify({'status': 'error', 'message': str(e)}), 500
         
         @self.app.route('/api/bitcoin/stop-stream', methods=['POST'])
         def stop_bitcoin_stream():
-            """Para streaming Bitcoin"""
-            self.bitcoin_streamer.stop_streaming()
-            return jsonify({'status': 'stopped'})
+            try:
+                self.bitcoin_streamer.stop_streaming()
+                logger.info("[STOP] Bitcoin streaming parado via API")
+                return jsonify({'status': 'stopped', 'message': 'Bitcoin streaming parado'})
+            except Exception as e:
+                logger.error(f"Erro ao parar streaming: {e}")
+                return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+        @self.app.route('/api/bitcoin/status')
+        def get_bitcoin_status():
+            stats = self.bitcoin_streamer.get_stream_statistics()
+            return jsonify(stats)
         
         @self.app.route('/api/bitcoin/metrics')
         def get_bitcoin_metrics():
-            """Métricas Bitcoin em tempo real"""
             return jsonify(self.bitcoin_analytics.get_real_time_metrics())
         
         @self.app.route('/api/bitcoin/recent-data')
         def get_bitcoin_recent_data():
-            """Dados recentes Bitcoin"""
             limit = request.args.get('limit', 50, type=int)
+            limit = min(limit, 1000)
             recent_data = self.bitcoin_streamer.get_recent_data(limit)
             return jsonify([data.to_dict() for data in recent_data])
         
-        # ==================== ROTAS TRADING ANALYZER ====================
         @self.app.route('/api/trading/analysis')
         def get_trading_analysis():
-            """Análise completa de trading"""
             return jsonify(self.trading_analyzer.get_current_analysis())
         
         @self.app.route('/api/trading/signals')
         def get_trading_signals():
-            """Sinais de trading recentes"""
             limit = request.args.get('limit', 20, type=int)
+            limit = min(limit, 100)
             signals = self.trading_analyzer.signal_manager.get_recent_signals(limit)
             return jsonify(signals)
         
         @self.app.route('/api/trading/active-signals')
         def get_active_signals():
-            """Sinais ativos"""
             active = []
+            current_price = 0
+            
+            if self.bitcoin_streamer.data_queue:
+                current_price = self.bitcoin_streamer.data_queue[-1].price
+            
             for signal in self.trading_analyzer.signal_manager.active_signals.values():
                 signal_dict = signal.to_dict()
-                # Adiciona preço atual para cálculo de progresso
-                if self.bitcoin_streamer.data_queue:
-                    signal_dict['current_price'] = self.bitcoin_streamer.data_queue[-1].price
+                signal_dict['current_price'] = current_price
                 active.append(signal_dict)
+                
             return jsonify(active)
         
         @self.app.route('/api/trading/pattern-stats')
         def get_pattern_statistics():
-            """Estatísticas por padrão"""
             return jsonify(self.trading_analyzer.signal_manager.get_pattern_statistics())
         
         @self.app.route('/api/trading/indicators')
         def get_current_indicators():
-            """Indicadores técnicos atuais"""
             if len(self.trading_analyzer.ta_engine.price_history) > 0:
                 indicators = self.trading_analyzer.ta_engine.calculate_indicators()
                 return jsonify(indicators)
             return jsonify({})
         
-        # ==================== ROTAS INTEGRADAS ====================
         @self.app.route('/api/integrated/status')
         def get_integrated_status():
-            """Status geral da aplicação"""
-            bitcoin_data_count = len(self.bitcoin_streamer.data_queue)
-            trading_data_count = len(self.trading_analyzer.ta_engine.price_history)
-            active_signals_count = len(self.trading_analyzer.signal_manager.active_signals)
+            bitcoin_stats = self.bitcoin_streamer.get_stream_statistics()
+            trading_health = self.trading_analyzer.get_system_health()
             
             return jsonify({
-                'bitcoin_streaming': self.bitcoin_streamer.is_running,
-                'bitcoin_data_points': bitcoin_data_count,
-                'trading_data_points': trading_data_count,
-                'active_signals': active_signals_count,
-                'last_bitcoin_price': self.bitcoin_streamer.data_queue[-1].price if bitcoin_data_count > 0 else 0,
-                'system_status': 'running' if self.bitcoin_streamer.is_running else 'stopped'
-            })
-        
-        @self.app.route('/api/integrated/dashboard-data')
-        def get_dashboard_data():
-            """Dados completos para dashboard integrado"""
-            # Bitcoin data
-            bitcoin_metrics = self.bitcoin_analytics.get_real_time_metrics()
-            recent_bitcoin = self.bitcoin_streamer.get_recent_data(10)
-            
-            # Trading data
-            trading_analysis = self.trading_analyzer.get_current_analysis()
-            
-            return jsonify({
-                'bitcoin': {
-                    'metrics': bitcoin_metrics,
-                    'recent_data': [data.to_dict() for data in recent_bitcoin],
-                    'streaming': self.bitcoin_streamer.is_running
-                },
-                'trading': trading_analysis,
-                'integrated_status': {
-                    'total_data_points': len(self.bitcoin_streamer.data_queue),
-                    'analysis_ready': len(self.trading_analyzer.ta_engine.price_history) >= 20,
-                    'last_update': datetime.now().isoformat()
-                }
-            })
-    
-    def run(self, debug=True, port=5000):
-        """Inicia a aplicação integrada"""
-        logging.basicConfig(level=logging.INFO)
-        print("🚀 Sistema Integrado Bitcoin + Trading iniciado!")
-        print(f"📊 Dashboard Principal: http://localhost:{port}")
-        print(f"💰 Dashboard Bitcoin: http://localhost:{port}/bitcoin")
-        print(f"📈 Dashboard Trading: http://localhost:{port}/trading")
-        print("🔄 APIs disponíveis:")
-        print(f"   - Status: http://localhost:{port}/api/integrated/status")
-        print(f"   - Bitcoin: http://localhost:{port}/api/bitcoin/metrics")
-        print(f"   - Trading: http://localhost:{port}/api/trading/analysis")
-        
-        self.app.run(debug=debug, port=port, host='0.0.0.0')
-
-# ==================== MAIN ====================
-if __name__ == "__main__":
-    # Cria diretórios necessários
-    os.makedirs('data', exist_ok=True)
-    os.makedirs('static/css', exist_ok=True)
-    os.makedirs('static/js', exist_ok=True)
-    os.makedirs('templates', exist_ok=True)
-    
-    # Inicializa e executa aplicação integrada
-    controller = IntegratedController()
-    controller.run(debug=True, port=5000)
+                'bitcoin_streaming': bitcoin_stats['is_running'],
+                'bitcoin_data_points': bitcoin_stats['total_data_points'],
+                'bitcoin_last_price': bitcoin_stats['last_price'],
+                'trading_data_points': trading_health['data_points'],
