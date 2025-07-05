@@ -1,6 +1,0 @@
-2025-07-05 02:45:24,773 - INFO - [OK] Todas as dependências estão disponíveis
-2025-07-05 02:45:24,774 - ERROR - [ERROR] Problema com trading_analyzer: no such column: signal_hash
-2025-07-05 02:45:24,775 - ERROR - [FIX] Certifique-se de que trading_analyzer.py está no diretório
-2025-07-05 02:45:52,903 - INFO - [OK] Todas as dependências estão disponíveis
-2025-07-05 02:45:52,904 - ERROR - [ERROR] Problema com trading_analyzer: no such column: signal_hash
-2025-07-05 02:45:52,904 - ERROR - [FIX] Certifique-se de que trading_analyzer.py está no diretório
