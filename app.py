@@ -1,4 +1,4 @@
-# app.py - Aplicação Principal Corrigida para Windows
+# app.py - Aplicação Principal Completa e Corrigida
 import json
 import time
 import threading
@@ -30,51 +30,28 @@ class WindowsCompatibleFormatter(logging.Formatter):
     """Formatter que remove caracteres Unicode problemáticos no Windows"""
     
     def format(self, record):
-        # Remove emojis e caracteres Unicode problemáticos
         msg = super().format(record)
-        # Substitui emojis por texto simples
         emoji_replacements = {
-            '🚀': '[START]',
-            '📊': '[DATA]',
-            '✅': '[OK]',
-            '❌': '[ERROR]',
-            '🛑': '[STOP]',
-            '💰': '[BTC]',
-            '📈': '[TRADE]',
-            '🔄': '[API]',
-            '⚙️': '[CTRL]',
-            '🎯': '[TARGET]',
-            '🧹': '[CLEAN]',
-            '📝': '[SAMPLE]',
-            '🔧': '[FIX]',
-            '⏰': '[TIME]',
-            '🎯': '[HIT]'
+            '🚀': '[START]', '📊': '[DATA]', '✅': '[OK]', '❌': '[ERROR]',
+            '🛑': '[STOP]', '💰': '[BTC]', '📈': '[TRADE]', '🔄': '[API]',
+            '⚙️': '[CTRL]', '🎯': '[TARGET]', '🧹': '[CLEAN]', '📝': '[SAMPLE]',
+            '🔧': '[FIX]', '⏰': '[TIME]'
         }
-        
         for emoji, replacement in emoji_replacements.items():
             msg = msg.replace(emoji, replacement)
-        
         return msg
 
-# Configurar logging
 def setup_logging():
     """Configura logging compatível com Windows"""
     os.makedirs('data', exist_ok=True)
+    formatter = WindowsCompatibleFormatter('%(asctime)s - %(levelname)s - %(message)s')
     
-    # Formatter personalizado
-    formatter = WindowsCompatibleFormatter(
-        '%(asctime)s - %(levelname)s - %(message)s'
-    )
-    
-    # Handler para arquivo
     file_handler = logging.FileHandler('data/trading_system.log', encoding='utf-8')
     file_handler.setFormatter(formatter)
     
-    # Handler para console
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     
-    # Configurar logger root
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     logger.addHandler(file_handler)
@@ -114,7 +91,6 @@ def migrate_database(db_path):
     cursor = conn.cursor()
     
     try:
-        # Verifica se a coluna data_hash existe
         cursor.execute("PRAGMA table_info(bitcoin_stream)")
         columns = [column[1] for column in cursor.fetchall()]
         
@@ -122,7 +98,6 @@ def migrate_database(db_path):
             logger.info("[MIGRATION] Adicionando coluna data_hash...")
             cursor.execute('ALTER TABLE bitcoin_stream ADD COLUMN data_hash TEXT')
             
-            # Atualiza registros existentes com hash
             cursor.execute('SELECT id, timestamp, price, source FROM bitcoin_stream')
             rows = cursor.fetchall()
             
@@ -135,7 +110,6 @@ def migrate_database(db_path):
             
             logger.info(f"[MIGRATION] Atualizados {len(rows)} registros com hash")
         
-        # Verifica índices
         cursor.execute("PRAGMA index_list(bitcoin_stream)")
         existing_indexes = [idx[1] for idx in cursor.fetchall()]
         
@@ -160,7 +134,7 @@ def migrate_database(db_path):
     finally:
         conn.close()
 
-# ==================== ENHANCED BITCOIN DATA STREAMER ====================
+# ==================== BITCOIN DATA STREAMER ====================
 class BitcoinDataStreamer:
     """Stream de dados Bitcoin com controle de duplicidade"""
     
@@ -169,10 +143,7 @@ class BitcoinDataStreamer:
         self.data_queue = deque(maxlen=max_queue_size)
         self.subscribers = []
         self.last_fetch_time = {}
-        self.fetch_intervals = {
-            'coingecko': 10,
-            'binance': 5
-        }
+        self.fetch_intervals = {'coingecko': 10, 'binance': 5}
         self.api_errors = {'coingecko': 0, 'binance': 0}
         self.max_consecutive_errors = 3
         self.last_successful_price = None
@@ -193,7 +164,6 @@ class BitcoinDataStreamer:
         """Verifica se pode fazer fetch da API"""
         if api_name not in self.last_fetch_time:
             return True
-        
         interval = self.fetch_intervals.get(api_name, 10)
         time_since_last = time.time() - self.last_fetch_time[api_name]
         return time_since_last >= interval
@@ -421,14 +391,11 @@ class BitcoinStreamProcessor:
     def init_database(self):
         """Inicializa banco com migração"""
         os.makedirs('data', exist_ok=True)
-        
-        # Verifica se banco existe
         db_exists = os.path.exists(self.db_path)
         
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Cria tabelas base
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS bitcoin_stream (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -460,11 +427,9 @@ class BitcoinStreamProcessor:
         conn.commit()
         conn.close()
         
-        # Executa migração se necessário
         if db_exists:
             migrate_database(self.db_path)
         else:
-            # Banco novo - adiciona coluna data_hash direto
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             cursor.execute('ALTER TABLE bitcoin_stream ADD COLUMN data_hash TEXT')
@@ -636,17 +601,14 @@ class IntegratedController:
     def __init__(self):
         self.app = Flask(__name__)
         
-        # Componentes
         self.bitcoin_streamer = BitcoinDataStreamer()
         self.bitcoin_processor = BitcoinStreamProcessor()
         self.bitcoin_analytics = BitcoinAnalyticsEngine()
         self.trading_analyzer = TradingAnalyzer()
         
-        # Controle de debounce
         self.last_trading_update = 0
         self.trading_update_interval = 2
         
-        # Conecta pipeline
         self.bitcoin_streamer.add_subscriber(self.bitcoin_processor.process_stream_data)
         self.bitcoin_streamer.add_subscriber(self._feed_trading_analyzer_debounced)
         
@@ -768,3 +730,255 @@ class IntegratedController:
                 'bitcoin_data_points': bitcoin_stats['total_data_points'],
                 'bitcoin_last_price': bitcoin_stats['last_price'],
                 'trading_data_points': trading_health['data_points'],
+                'trading_active_signals': trading_health['active_signals'],
+                'trading_analysis_count': trading_health['total_analysis'],
+                'system_status': 'running' if bitcoin_stats['is_running'] else 'stopped',
+                'last_update': datetime.now().isoformat()
+            })
+        
+        @self.app.route('/api/integrated/dashboard-data')
+        def get_dashboard_data():
+            try:
+                bitcoin_metrics = self.bitcoin_analytics.get_real_time_metrics()
+                recent_bitcoin = self.bitcoin_streamer.get_recent_data(20)
+                bitcoin_stats = self.bitcoin_streamer.get_stream_statistics()
+                trading_analysis = self.trading_analyzer.get_current_analysis()
+                
+                return jsonify({
+                    'bitcoin': {
+                        'metrics': bitcoin_metrics,
+                        'recent_data': [data.to_dict() for data in recent_bitcoin],
+                        'streaming': bitcoin_stats['is_running'],
+                        'stats': bitcoin_stats
+                    },
+                    'trading': trading_analysis,
+                    'integrated_status': {
+                        'total_data_points': bitcoin_stats['total_data_points'],
+                        'analysis_ready': len(self.trading_analyzer.ta_engine.price_history) >= 30,
+                        'last_update': datetime.now().isoformat(),
+                        'system_healthy': bitcoin_stats['is_running'] and len(self.trading_analyzer.ta_engine.price_history) > 0
+                    }
+                })
+                
+            except Exception as e:
+                logger.error(f"Erro ao obter dados do dashboard: {e}")
+                return jsonify({
+                    'error': 'Erro interno do servidor',
+                    'message': str(e)
+                }), 500
+        
+        @self.app.route('/api/control/cleanup', methods=['POST'])
+        def cleanup_data():
+            try:
+                self.trading_analyzer.signal_manager.cleanup_old_data()
+                days_to_keep = request.json.get('days_to_keep', 7) if request.json else 7
+                
+                conn = sqlite3.connect(self.bitcoin_processor.db_path)
+                cursor = conn.cursor()
+                
+                cutoff_date = datetime.now() - timedelta(days=days_to_keep)
+                cursor.execute('DELETE FROM bitcoin_stream WHERE timestamp < ?', (cutoff_date,))
+                deleted_bitcoin = cursor.rowcount
+                
+                cursor.execute('DELETE FROM bitcoin_analytics WHERE created_at < ?', (cutoff_date,))
+                deleted_analytics = cursor.rowcount
+                conn.commit()
+                conn.close()
+                
+                logger.info(f"[CLEAN] Limpeza: {deleted_bitcoin} bitcoin, {deleted_analytics} analytics")
+                
+                return jsonify({
+                    'status': 'success',
+                    'deleted_bitcoin_records': deleted_bitcoin,
+                    'deleted_analytics_records': deleted_analytics,
+                    'message': f'Dados anteriores a {days_to_keep} dias removidos'
+                })
+                
+            except Exception as e:
+                logger.error(f"Erro na limpeza: {e}")
+                return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+        @self.app.route('/api/control/reset-signals', methods=['POST'])
+        def reset_signals():
+            try:
+                self.trading_analyzer.signal_manager.active_signals.clear()
+                if hasattr(self.trading_analyzer.signal_manager, 'uniqueness_system'):
+                    self.trading_analyzer.signal_manager.uniqueness_system.signal_hashes.clear()
+                    self.trading_analyzer.signal_manager.uniqueness_system.pattern_cooldowns.clear()
+                
+                logger.info("[FIX] Sistema de sinais resetado")
+                return jsonify({'status': 'success', 'message': 'Sistema resetado'})
+                
+            except Exception as e:
+                logger.error(f"Erro ao resetar sinais: {e}")
+                return jsonify({'status': 'error', 'message': str(e)}), 500
+        
+        @self.app.errorhandler(404)
+        def not_found(error):
+            return jsonify({'error': 'Endpoint não encontrado'}), 404
+        
+        @self.app.errorhandler(500)
+        def internal_error(error):
+            logger.error(f"Erro interno: {error}")
+            return jsonify({'error': 'Erro interno do servidor'}), 500
+    
+    def run(self, debug=False, port=5000, host='0.0.0.0'):
+        """Inicia aplicação"""
+        logger.info("=" * 60)
+        logger.info("[START] SISTEMA INTEGRADO BITCOIN + TRADING INICIADO")
+        logger.info("=" * 60)
+        logger.info(f"[DATA] Dashboard Principal: http://localhost:{port}")
+        logger.info(f"[BTC] Dashboard Bitcoin: http://localhost:{port}/bitcoin")
+        logger.info(f"[TRADE] Dashboard Trading: http://localhost:{port}/trading")
+        logger.info("")
+        logger.info("[API] APIs disponíveis:")
+        logger.info(f"   - Status: http://localhost:{port}/api/integrated/status")
+        logger.info(f"   - Bitcoin: http://localhost:{port}/api/bitcoin/metrics")
+        logger.info(f"   - Trading: http://localhost:{port}/api/trading/analysis")
+        logger.info(f"   - Sinais: http://localhost:{port}/api/trading/active-signals")
+        logger.info("")
+        logger.info("[CTRL] Controles:")
+        logger.info(f"   - Iniciar: POST http://localhost:{port}/api/bitcoin/start-stream")
+        logger.info(f"   - Parar: POST http://localhost:{port}/api/bitcoin/stop-stream")
+        logger.info("=" * 60)
+        
+        if not debug:
+            self.app.config['DEBUG'] = False
+            self.app.config['TESTING'] = False
+            
+        try:
+            self.app.run(debug=debug, port=port, host=host, threaded=True)
+        except KeyboardInterrupt:
+            logger.info("[STOP] Aplicação interrompida pelo usuário")
+            self.shutdown()
+        except Exception as e:
+            logger.error(f"Erro ao iniciar aplicação: {e}")
+            raise
+    
+    def shutdown(self):
+        """Finaliza aplicação"""
+        logger.info("[FIX] Finalizando aplicação...")
+        
+        try:
+            if self.bitcoin_streamer.is_running:
+                self.bitcoin_streamer.stop_streaming()
+            
+            if self.bitcoin_processor.batch_buffer:
+                self.bitcoin_processor._process_batch()
+            
+            if hasattr(self.trading_analyzer.signal_manager, 'cleanup_old_data'):
+                self.trading_analyzer.signal_manager.cleanup_old_data(days_to_keep=1)
+            
+            logger.info("[OK] Aplicação finalizada com sucesso")
+            
+        except Exception as e:
+            logger.error(f"Erro durante finalização: {e}")
+
+# ==================== UTILITY FUNCTIONS ====================
+def create_sample_data():
+    """Cria dados de exemplo"""
+    logger.info("[SAMPLE] Criando dados de exemplo...")
+    
+    try:
+        os.makedirs('data', exist_ok=True)
+        os.makedirs('static/css', exist_ok=True)
+        os.makedirs('static/js', exist_ok=True)
+        os.makedirs('templates', exist_ok=True)
+        
+        processor = BitcoinStreamProcessor()
+        analyzer = TradingAnalyzer()
+        
+        base_price = 43000
+        for i in range(50):
+            timestamp = datetime.now() - timedelta(minutes=50-i)
+            price = base_price + (i * 10) + ((i * 17) % 100)
+            
+            bitcoin_data = BitcoinData(
+                timestamp=timestamp,
+                price=price,
+                volume_24h=1000000000,
+                market_cap=800000000000,
+                price_change_24h=((price - base_price) / base_price) * 100,
+                source='sample'
+            )
+            
+            processor.process_stream_data(bitcoin_data)
+            analyzer.add_price_data(timestamp, price, 1000000)
+        
+        processor._process_batch()
+        
+        logger.info(f"[OK] {50} registros de exemplo criados")
+        
+        analysis = analyzer.get_current_analysis()
+        logger.info(f"[DATA] Sinais criados: {len(analysis['recent_signals'])}")
+        logger.info(f"[TARGET] Sinais ativos: {analysis['active_signals']}")
+        
+    except Exception as e:
+        logger.error(f"Erro ao criar dados de exemplo: {e}")
+
+def validate_dependencies():
+    """Valida dependências"""
+    required_modules = ['flask', 'requests', 'sqlite3', 'threading', 'json']
+    missing = []
+    
+    for module in required_modules:
+        try:
+            __import__(module)
+        except ImportError:
+            missing.append(module)
+    
+    if missing:
+        logger.error(f"[ERROR] Dependências em falta: {', '.join(missing)}")
+        logger.error("[FIX] Instale com: pip install -r requirements.txt")
+        return False
+    
+    logger.info("[OK] Todas as dependências estão disponíveis")
+    return True
+
+def check_trading_analyzer():
+    """Verifica se trading_analyzer está disponível"""
+    try:
+        from trading_analyzer import TradingAnalyzer
+        analyzer = TradingAnalyzer()
+        logger.info("[OK] Trading Analyzer carregado com sucesso")
+        return True
+    except Exception as e:
+        logger.error(f"[ERROR] Problema com trading_analyzer: {e}")
+        logger.error("[FIX] Certifique-se de que trading_analyzer.py está no diretório")
+        return False
+
+# ==================== MAIN ====================
+def main():
+    """Função principal"""
+    print("[START] Inicializando Sistema Integrado Bitcoin + Trading...")
+    
+    if not validate_dependencies():
+        return 1
+    
+    if not check_trading_analyzer():
+        return 1
+    
+    if not os.path.exists('data/bitcoin_stream.db'):
+        create_sample_data()
+    
+    try:
+        controller = IntegratedController()
+        
+        debug_mode = os.getenv('DEBUG', 'false').lower() == 'true'
+        port = int(os.getenv('PORT', 5000))
+        host = os.getenv('HOST', '0.0.0.0')
+        
+        controller.run(debug=debug_mode, port=port, host=host)
+        return 0
+        
+    except KeyboardInterrupt:
+        logger.info("[STOP] Aplicação interrompida pelo usuário")
+        return 0
+    except Exception as e:
+        logger.error(f"[ERROR] Erro crítico: {e}")
+        import traceback
+        logger.error(f"[ERROR] Traceback: {traceback.format_exc()}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
