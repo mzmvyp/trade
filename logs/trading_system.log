@@ -1,0 +1,591 @@
+2025-07-05 23:18:24 - trading_system - INFO - ============================================================
+2025-07-05 23:18:24 - trading_system - INFO - BITCOIN TRADING SYSTEM - LOGGING INICIADO
+2025-07-05 23:18:24 - trading_system - INFO - Nível de log: INFO
+2025-07-05 23:18:24 - trading_system - INFO - Console: Habilitado
+2025-07-05 23:18:24 - trading_system - INFO - Arquivo: Habilitado
+2025-07-05 23:18:24 - trading_system - INFO - Arquivo de log: logs\trading_system.log
+2025-07-05 23:18:24 - trading_system - INFO - Timestamp: 2025-07-05T23:18:24.468206
+2025-07-05 23:18:24 - trading_system - INFO - ============================================================
+2025-07-05 23:18:24 - trading_system - INFO - 🚀 Iniciando Bitcoin Trading System...
+2025-07-05 23:18:24 - trading_system - INFO - 📁 Estrutura de diretórios criada
+2025-07-05 23:18:24 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:18:31 - trading_system - INFO - ✅ Dependências críticas OK
+2025-07-05 23:18:31 - trading_system - INFO - 🏗️  Criando aplicação modular...
+2025-07-05 23:18:31 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:18:31 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:18:31 - core.data_manager - WARNING - Tentativa 1 falhou: near "INDEX": syntax error
+2025-07-05 23:18:32 - core.data_manager - WARNING - Tentativa 2 falhou: near "INDEX": syntax error
+2025-07-05 23:18:34 - core.data_manager - WARNING - Tentativa 3 falhou: near "INDEX": syntax error
+2025-07-05 23:18:34 - core.data_manager - ERROR - Query falhou após 3 tentativas: near "INDEX": syntax error
+2025-07-05 23:18:34 - trading_system - ERROR - 💥 Erro crítico: Falha ao inicializar estrutura do banco
+2025-07-05 23:18:34 - trading_system - ERROR - 📋 Traceback completo:
+Traceback (most recent call last):
+  File "c:\Users\mzmvy\Documents\python\trading_system\app.py", line 261, in main
+    app = TradingSystemApp()
+  File "c:\Users\mzmvy\Documents\python\trading_system\app.py", line 36, in __init__
+    self.system_manager = SystemManager()
+                          ~~~~~~~~~~~~~^^
+  File "c:\Users\mzmvy\Documents\python\trading_system\core\system_manager.py", line 27, in __init__
+    self.database = get_database_manager()
+                    ~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 1140, in get_database_manager
+    _database_manager = DatabaseManager()
+  File "c:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 51, in __init__
+    self._initialize_database()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 255, in _initialize_database
+    raise Exception("Falha ao inicializar estrutura do banco")
+Exception: Falha ao inicializar estrutura do banco
+
+2025-07-05 23:18:34 - trading_system - ERROR - ❌ Aplicação finalizada com erro
+2025-07-05 23:19:10 - trading_system - INFO - ============================================================
+2025-07-05 23:19:10 - trading_system - INFO - BITCOIN TRADING SYSTEM - LOGGING INICIADO
+2025-07-05 23:19:10 - trading_system - INFO - Nível de log: INFO
+2025-07-05 23:19:10 - trading_system - INFO - Console: Habilitado
+2025-07-05 23:19:10 - trading_system - INFO - Arquivo: Habilitado
+2025-07-05 23:19:10 - trading_system - INFO - Arquivo de log: logs\trading_system.log
+2025-07-05 23:19:10 - trading_system - INFO - Timestamp: 2025-07-05T23:19:10.677842
+2025-07-05 23:19:10 - trading_system - INFO - ============================================================
+2025-07-05 23:19:10 - trading_system - INFO - 🚀 Iniciando Bitcoin Trading System...
+2025-07-05 23:19:10 - trading_system - INFO - 📁 Estrutura de diretórios criada
+2025-07-05 23:19:10 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:19:11 - trading_system - INFO - ✅ Dependências críticas OK
+2025-07-05 23:19:11 - trading_system - INFO - 🏗️  Criando aplicação modular...
+2025-07-05 23:19:11 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:19:11 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:19:11 - core.data_manager - WARNING - Tentativa 1 falhou: near "INDEX": syntax error
+2025-07-05 23:19:12 - core.data_manager - WARNING - Tentativa 2 falhou: near "INDEX": syntax error
+2025-07-05 23:19:14 - core.data_manager - WARNING - Tentativa 3 falhou: near "INDEX": syntax error
+2025-07-05 23:19:14 - core.data_manager - ERROR - Query falhou após 3 tentativas: near "INDEX": syntax error
+2025-07-05 23:19:14 - trading_system - ERROR - 💥 Erro crítico: Falha ao inicializar estrutura do banco
+2025-07-05 23:19:14 - trading_system - ERROR - 📋 Traceback completo:
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\app.py", line 261, in main
+    app = TradingSystemApp()
+  File "C:\Users\mzmvy\Documents\python\trading_system\app.py", line 36, in __init__
+    self.system_manager = SystemManager()
+                          ~~~~~~~~~~~~~^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\core\system_manager.py", line 27, in __init__
+    self.database = get_database_manager()
+                    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 1140, in get_database_manager
+    _database_manager = DatabaseManager()
+  File "C:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 51, in __init__
+    self._initialize_database()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\core\data_manager.py", line 255, in _initialize_database
+    raise Exception("Falha ao inicializar estrutura do banco")
+Exception: Falha ao inicializar estrutura do banco
+
+2025-07-05 23:19:14 - trading_system - ERROR - ❌ Aplicação finalizada com erro
+2025-07-05 23:22:03 - trading_system - INFO - ============================================================
+2025-07-05 23:22:03 - trading_system - INFO - BITCOIN TRADING SYSTEM - LOGGING INICIADO
+2025-07-05 23:22:03 - trading_system - INFO - Nível de log: INFO
+2025-07-05 23:22:03 - trading_system - INFO - Console: Habilitado
+2025-07-05 23:22:03 - trading_system - INFO - Arquivo: Habilitado
+2025-07-05 23:22:03 - trading_system - INFO - Arquivo de log: logs\trading_system.log
+2025-07-05 23:22:03 - trading_system - INFO - Timestamp: 2025-07-05T23:22:03.293290
+2025-07-05 23:22:03 - trading_system - INFO - ============================================================
+2025-07-05 23:22:03 - trading_system - INFO - 🚀 Iniciando Bitcoin Trading System...
+2025-07-05 23:22:03 - trading_system - INFO - 📁 Estrutura de diretórios criada
+2025-07-05 23:22:03 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:03 - trading_system - INFO - ✅ Dependências críticas OK
+2025-07-05 23:22:03 - trading_system - INFO - 🏗️  Criando aplicação modular...
+2025-07-05 23:22:03 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:03 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:03 - core.data_manager - INFO - Estrutura do banco de dados inicializada
+2025-07-05 23:22:03 - core.data_manager - INFO - DatabaseManager inicializado: data\trading_system.db
+2025-07-05 23:22:03 - core.system_manager - INFO - SystemManager inicializado
+2025-07-05 23:22:03 - trading_system - INFO - ✅ Error handlers registrados
+2025-07-05 23:22:03 - trading_system - INFO - ✅ Template helpers registrados
+2025-07-05 23:22:03 - trading_system - INFO - ✅ Middlewares registrados
+2025-07-05 23:22:03 - app - INFO - ✅ Todas as rotas registradas com sucesso
+2025-07-05 23:22:03 - trading_system - INFO - ✅ Rotas registradas
+2025-07-05 23:22:03 - trading_system - INFO - 🎯 Todos os componentes registrados com sucesso
+2025-07-05 23:22:03 - trading_system - INFO - 🎯 Iniciando servidor Flask...
+2025-07-05 23:22:03 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:03 - trading_system - INFO - 🚀 BITCOIN TRADING SYSTEM - SISTEMA MODULAR INICIADO
+2025-07-05 23:22:03 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:03 - trading_system - INFO - 📊 Versão: 1.0.0
+2025-07-05 23:22:03 - trading_system - INFO - 🏗️  Arquitetura: Modular (Controllers + Services + Core)
+2025-07-05 23:22:03 - trading_system - INFO - 🌐 Endereço: http://0.0.0.0:5000
+2025-07-05 23:22:03 - trading_system - INFO - 
+2025-07-05 23:22:03 - trading_system - INFO - 📱 PÁGINAS WEB:
+2025-07-05 23:22:03 - trading_system - INFO -    • Dashboard: http://localhost:5000/
+2025-07-05 23:22:03 - trading_system - INFO -    • Trading: http://localhost:5000/trading
+2025-07-05 23:22:03 - trading_system - INFO -    • Analytics: http://localhost:5000/analytics
+2025-07-05 23:22:03 - trading_system - INFO -    • Configurações: http://localhost:5000/settings
+2025-07-05 23:22:03 - trading_system - INFO - 
+2025-07-05 23:22:03 - trading_system - INFO - 🔗 APIS PRINCIPAIS:
+2025-07-05 23:22:03 - trading_system - INFO -    • Sistema: http://localhost:5000/api/system/status
+2025-07-05 23:22:03 - trading_system - INFO -    • Pares: http://localhost:5000/api/pairs/list
+2025-07-05 23:22:03 - trading_system - INFO -    • Dashboard: http://localhost:5000/api/dashboard/data
+2025-07-05 23:22:03 - trading_system - INFO -    • Trading: http://localhost:5000/api/trading/signals
+2025-07-05 23:22:03 - trading_system - INFO -    • Analytics: http://localhost:5000/api/analytics/performance
+2025-07-05 23:22:03 - trading_system - INFO - 
+2025-07-05 23:22:03 - trading_system - INFO - ⌨️  CONTROLES:
+2025-07-05 23:22:03 - trading_system - INFO -    • Ctrl+C para parar
+2025-07-05 23:22:03 - trading_system - INFO -    • POST /api/system/start para iniciar
+2025-07-05 23:22:03 - trading_system - INFO -    • POST /api/system/stop para parar
+2025-07-05 23:22:03 - trading_system - INFO -    • GET /api/system/health para health check
+2025-07-05 23:22:03 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:03 - core.system_manager - INFO - 💰 Pares de Trading: 2/7 habilitados
+2025-07-05 23:22:03 - core.system_manager - INFO -    • BTCUSDT (Bitcoin/USDT) - #f7931a
+2025-07-05 23:22:03 - core.system_manager - INFO -    • ETHUSDT (Ethereum/USDT) - #627eea
+2025-07-05 23:22:03 - trading_system - INFO - 🏗️  ESTRUTURA MODULAR CARREGADA:
+2025-07-05 23:22:03 - trading_system - INFO -    📁 Controllers: System, Pairs, Dashboard, Trading, Analytics
+2025-07-05 23:22:03 - trading_system - INFO -    📁 Services: System, Pairs, Dashboard, Trading, Analytics
+2025-07-05 23:22:03 - trading_system - INFO -    📁 Routes: API + Web routes registradas
+2025-07-05 23:22:03 - trading_system - INFO -    📁 Core: SystemManager, DataStreamer, TradingPairs
+2025-07-05 23:22:03 - trading_system - INFO -    📁 Web: ErrorHandlers, TemplateHelpers, Middleware
+2025-07-05 23:22:03 - trading_system - INFO - 
+2025-07-05 23:22:05 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.28:5000
+2025-07-05 23:22:05 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-07-05 23:22:35 - web.error_handlers - WARNING - 404 - Página não encontrada: /api/integrated/dashboard-data
+2025-07-05 23:22:35 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:35] "[33mGET /api/integrated/dashboard-data HTTP/1.1[0m" 404 -
+2025-07-05 23:22:35 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:35] "GET /api/trading/signals?limit=5 HTTP/1.1" 200 -
+2025-07-05 23:22:38 - app - ERROR - Erro ao carregar dashboard: 'DashboardController' object has no attribute 'list_pairs'
+2025-07-05 23:22:38 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+2025-07-05 23:22:38 - web.error_handlers - ERROR - 500 - Erro interno: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-07-05 23:22:38 - web.middleware - ERROR - Erro na requisição /: errors/500.html
+2025-07-05 23:22:38 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:38] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-07-05 23:22:38 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 331, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1478, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1458, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 810, in handle_exception
+    server_error = self.ensure_sync(handler)(server_error)
+  File "C:\Users\mzmvy\Documents\python\trading_system\web\error_handlers.py", line 39, in internal_error
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+2025-07-05 23:22:39 - web.error_handlers - WARNING - 404 - Página não encontrada: /api/integrated/dashboard-data
+2025-07-05 23:22:39 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:39] "GET /api/trading/signals?limit=5 HTTP/1.1" 200 -
+2025-07-05 23:22:39 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:39] "[33mGET /api/integrated/dashboard-data HTTP/1.1[0m" 404 -
+2025-07-05 23:22:46 - trading_system - INFO - ✅ Aplicação finalizada com sucesso
+2025-07-05 23:22:50 - trading_system - INFO - ============================================================
+2025-07-05 23:22:50 - trading_system - INFO - BITCOIN TRADING SYSTEM - LOGGING INICIADO
+2025-07-05 23:22:50 - trading_system - INFO - Nível de log: INFO
+2025-07-05 23:22:50 - trading_system - INFO - Console: Habilitado
+2025-07-05 23:22:50 - trading_system - INFO - Arquivo: Habilitado
+2025-07-05 23:22:50 - trading_system - INFO - Arquivo de log: logs\trading_system.log
+2025-07-05 23:22:50 - trading_system - INFO - Timestamp: 2025-07-05T23:22:50.976961
+2025-07-05 23:22:50 - trading_system - INFO - ============================================================
+2025-07-05 23:22:50 - trading_system - INFO - 🚀 Iniciando Bitcoin Trading System...
+2025-07-05 23:22:50 - trading_system - INFO - 📁 Estrutura de diretórios criada
+2025-07-05 23:22:50 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:51 - trading_system - INFO - ✅ Dependências críticas OK
+2025-07-05 23:22:51 - trading_system - INFO - 🏗️  Criando aplicação modular...
+2025-07-05 23:22:51 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:51 - config.settings - INFO - Configurações carregadas
+2025-07-05 23:22:51 - core.data_manager - INFO - Estrutura do banco de dados inicializada
+2025-07-05 23:22:51 - core.data_manager - INFO - DatabaseManager inicializado: data\trading_system.db
+2025-07-05 23:22:51 - core.system_manager - INFO - SystemManager inicializado
+2025-07-05 23:22:51 - trading_system - INFO - ✅ Error handlers registrados
+2025-07-05 23:22:51 - trading_system - INFO - ✅ Template helpers registrados
+2025-07-05 23:22:51 - trading_system - INFO - ✅ Middlewares registrados
+2025-07-05 23:22:51 - app - INFO - ✅ Todas as rotas registradas com sucesso
+2025-07-05 23:22:51 - trading_system - INFO - ✅ Rotas registradas
+2025-07-05 23:22:51 - trading_system - INFO - 🎯 Todos os componentes registrados com sucesso
+2025-07-05 23:22:51 - trading_system - INFO - 🎯 Iniciando servidor Flask...
+2025-07-05 23:22:51 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:51 - trading_system - INFO - 🚀 BITCOIN TRADING SYSTEM - SISTEMA MODULAR INICIADO
+2025-07-05 23:22:51 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:51 - trading_system - INFO - 📊 Versão: 1.0.0
+2025-07-05 23:22:51 - trading_system - INFO - 🏗️  Arquitetura: Modular (Controllers + Services + Core)
+2025-07-05 23:22:51 - trading_system - INFO - 🌐 Endereço: http://0.0.0.0:5000
+2025-07-05 23:22:51 - trading_system - INFO - 
+2025-07-05 23:22:51 - trading_system - INFO - 📱 PÁGINAS WEB:
+2025-07-05 23:22:51 - trading_system - INFO -    • Dashboard: http://localhost:5000/
+2025-07-05 23:22:51 - trading_system - INFO -    • Trading: http://localhost:5000/trading
+2025-07-05 23:22:51 - trading_system - INFO -    • Analytics: http://localhost:5000/analytics
+2025-07-05 23:22:51 - trading_system - INFO -    • Configurações: http://localhost:5000/settings
+2025-07-05 23:22:51 - trading_system - INFO - 
+2025-07-05 23:22:51 - trading_system - INFO - 🔗 APIS PRINCIPAIS:
+2025-07-05 23:22:51 - trading_system - INFO -    • Sistema: http://localhost:5000/api/system/status
+2025-07-05 23:22:51 - trading_system - INFO -    • Pares: http://localhost:5000/api/pairs/list
+2025-07-05 23:22:51 - trading_system - INFO -    • Dashboard: http://localhost:5000/api/dashboard/data
+2025-07-05 23:22:51 - trading_system - INFO -    • Trading: http://localhost:5000/api/trading/signals
+2025-07-05 23:22:51 - trading_system - INFO -    • Analytics: http://localhost:5000/api/analytics/performance
+2025-07-05 23:22:51 - trading_system - INFO - 
+2025-07-05 23:22:51 - trading_system - INFO - ⌨️  CONTROLES:
+2025-07-05 23:22:51 - trading_system - INFO -    • Ctrl+C para parar
+2025-07-05 23:22:51 - trading_system - INFO -    • POST /api/system/start para iniciar
+2025-07-05 23:22:51 - trading_system - INFO -    • POST /api/system/stop para parar
+2025-07-05 23:22:51 - trading_system - INFO -    • GET /api/system/health para health check
+2025-07-05 23:22:51 - trading_system - INFO - ================================================================================
+2025-07-05 23:22:51 - core.system_manager - INFO - 💰 Pares de Trading: 2/7 habilitados
+2025-07-05 23:22:51 - core.system_manager - INFO -    • BTCUSDT (Bitcoin/USDT) - #f7931a
+2025-07-05 23:22:51 - core.system_manager - INFO -    • ETHUSDT (Ethereum/USDT) - #627eea
+2025-07-05 23:22:51 - trading_system - INFO - 🏗️  ESTRUTURA MODULAR CARREGADA:
+2025-07-05 23:22:51 - trading_system - INFO -    📁 Controllers: System, Pairs, Dashboard, Trading, Analytics
+2025-07-05 23:22:51 - trading_system - INFO -    📁 Services: System, Pairs, Dashboard, Trading, Analytics
+2025-07-05 23:22:51 - trading_system - INFO -    📁 Routes: API + Web routes registradas
+2025-07-05 23:22:51 - trading_system - INFO -    📁 Core: SystemManager, DataStreamer, TradingPairs
+2025-07-05 23:22:51 - trading_system - INFO -    📁 Web: ErrorHandlers, TemplateHelpers, Middleware
+2025-07-05 23:22:51 - trading_system - INFO - 
+2025-07-05 23:22:52 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.28:5000
+2025-07-05 23:22:52 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-07-05 23:22:58 - app - ERROR - Erro ao carregar dashboard: 'DashboardController' object has no attribute 'list_pairs'
+2025-07-05 23:22:58 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+2025-07-05 23:22:58 - web.error_handlers - ERROR - 500 - Erro interno: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-07-05 23:22:58 - web.middleware - ERROR - Erro na requisição /: errors/500.html
+2025-07-05 23:22:58 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:22:58] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-07-05 23:22:58 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 331, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1478, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1458, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 810, in handle_exception
+    server_error = self.ensure_sync(handler)(server_error)
+  File "C:\Users\mzmvy\Documents\python\trading_system\web\error_handlers.py", line 39, in internal_error
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+2025-07-05 23:23:11 - app - ERROR - Erro ao carregar dashboard: 'DashboardController' object has no attribute 'list_pairs'
+2025-07-05 23:23:11 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+2025-07-05 23:23:11 - web.error_handlers - ERROR - 500 - Erro interno: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-07-05 23:23:11 - web.middleware - ERROR - Erro na requisição /: errors/500.html
+2025-07-05 23:23:11 - werkzeug - INFO - 127.0.0.1 - - [05/Jul/2025 23:23:11] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-07-05 23:23:11 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 15, in dashboard
+    pairs_data, _ = dashboard_controller.list_pairs()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DashboardController' object has no attribute 'list_pairs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\Documents\python\trading_system\api\routes\web_routes.py", line 25, in dashboard
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\werkzeug\serving.py", line 331, in execute
+    application_iter = app(environ, start_response)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1478, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 1458, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\app.py", line 810, in handle_exception
+    server_error = self.ensure_sync(handler)(server_error)
+  File "C:\Users\mzmvy\Documents\python\trading_system\web\error_handlers.py", line 39, in internal_error
+    return render_template('errors/500.html'), 500
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 151, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mzmvy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: errors/500.html

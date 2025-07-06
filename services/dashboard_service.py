@@ -1,6 +1,7 @@
-# services/dashboard_service.py
+# services/dashboard_service.py - Corrigido
 from .base_service import BaseService
 from typing import Dict, Any
+from datetime import datetime
 
 class DashboardService(BaseService):
     """Serviço para dados do dashboard"""
@@ -102,3 +103,4 @@ class DashboardService(BaseService):
         if not self.system_manager.start_time:
             return 0
         return int((datetime.now() - self.system_manager.start_time).total_seconds())
+    

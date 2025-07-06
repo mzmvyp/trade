@@ -1,6 +1,7 @@
-# web/template_helpers.py
+# web/template_helpers.py - Corrigido
 from datetime import datetime, timedelta
 import json
+from flask import request
 
 def register_template_helpers(app):
     """Registra helpers e filtros para templates"""
@@ -48,7 +49,7 @@ def register_template_helpers(app):
             return "Agora mesmo"
     
     @app.template_filter('currency')
-    def currency_filter(value, symbol=', decimals=2):
+    def currency_filter(value, symbol='$', decimals=2):
         """Formata valor como moeda"""
         try:
             if isinstance(value, str):

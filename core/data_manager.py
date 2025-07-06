@@ -1,4 +1,4 @@
-# core/database_manager.py - Gerenciador de Banco de Dados
+# core/data_manager.py - Gerenciador de Banco de Dados (CORRIGIDO)
 import logging
 import sqlite3
 import threading
@@ -7,8 +7,6 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Union, Tuple
 from pathlib import Path
 import time
-
-from .trading_pair import PriceData
 
 logger = logging.getLogger(__name__)
 
@@ -160,10 +158,7 @@ class DatabaseManager:
             close_price REAL,
             volume REAL,
             source TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            INDEX(symbol, timestamp),
-            INDEX(timestamp),
-            INDEX(symbol)
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
         """
         
@@ -186,11 +181,7 @@ class DatabaseManager:
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             closed_at DATETIME,
             close_reason TEXT,
-            metadata TEXT,
-            INDEX(symbol),
-            INDEX(status),
-            INDEX(created_at),
-            INDEX(signal_type)
+            metadata TEXT
         )
         """
         
@@ -204,10 +195,7 @@ class DatabaseManager:
             indicator_value REAL,
             timeframe TEXT DEFAULT '5m',
             metadata TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            INDEX(symbol, timestamp),
-            INDEX(indicator_name),
-            INDEX(timestamp)
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
         """
         
@@ -233,10 +221,7 @@ class DatabaseManager:
             component TEXT,
             message TEXT NOT NULL,
             details TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            INDEX(timestamp),
-            INDEX(level),
-            INDEX(component)
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
         """
         
@@ -254,11 +239,30 @@ class DatabaseManager:
             if result is None:
                 raise Exception("Falha ao inicializar estrutura do banco")
         
+        # Cria índices para melhor performance
+        self._create_indexes()
+        
         logger.info("Estrutura do banco de dados inicializada")
+    
+    def _create_indexes(self):
+        """Cria índices para melhor performance"""
+        indexes = [
+            "CREATE INDEX IF NOT EXISTS idx_price_data_symbol_timestamp ON price_data(symbol, timestamp)",
+            "CREATE INDEX IF NOT EXISTS idx_price_data_timestamp ON price_data(timestamp)",
+            "CREATE INDEX IF NOT EXISTS idx_trading_signals_symbol ON trading_signals(symbol)",
+            "CREATE INDEX IF NOT EXISTS idx_trading_signals_status ON trading_signals(status)",
+            "CREATE INDEX IF NOT EXISTS idx_trading_signals_created_at ON trading_signals(created_at)",
+            "CREATE INDEX IF NOT EXISTS idx_technical_indicators_symbol_timestamp ON technical_indicators(symbol, timestamp)",
+            "CREATE INDEX IF NOT EXISTS idx_system_logs_timestamp ON system_logs(timestamp)",
+            "CREATE INDEX IF NOT EXISTS idx_system_logs_level ON system_logs(level)"
+        ]
+        
+        for index in indexes:
+            self._execute_with_retry(index)
     
     # ==================== DADOS DE PREÇO ====================
     
-    def save_price_data(self, price_data: PriceData) -> bool:
+    def save_price_data(self, price_data) -> bool:
         """
         Salva dados de preço no banco
         
@@ -290,7 +294,7 @@ class DatabaseManager:
         result = self._execute_with_retry(query, params)
         return result is not None
     
-    def save_price_data_batch(self, price_data_list: List[PriceData]) -> int:
+    def save_price_data_batch(self, price_data_list: List) -> int:
         """
         Salva múltiplos dados de preço em lote
         
@@ -894,149 +898,6 @@ class DatabaseManager:
             stats['performance']['success_rate'] = 0
         
         return stats
-    
-    def get_data_summary(self, symbol: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Obtém resumo dos dados armazenados
-        
-        Args:
-            symbol: Filtrar por símbolo específico (opcional)
-            
-        Returns:
-            Resumo dos dados
-        """
-        summary = {
-            'price_data': {},
-            'signals': {},
-            'indicators': {}
-        }
-        
-        # Resumo de dados de preço
-        if symbol:
-            price_query = """
-            SELECT 
-                COUNT(*) as total,
-                MIN(timestamp) as first_record,
-                MAX(timestamp) as last_record,
-                AVG(price) as avg_price,
-                MIN(price) as min_price,
-                MAX(price) as max_price
-            FROM price_data 
-            WHERE symbol = ?
-            """
-            params = (symbol,)
-        else:
-            price_query = """
-            SELECT 
-                COUNT(*) as total,
-                MIN(timestamp) as first_record,
-                MAX(timestamp) as last_record,
-                COUNT(DISTINCT symbol) as unique_symbols
-            FROM price_data
-            """
-            params = ()
-        
-        result = self._execute_with_retry(price_query, params, 'one')
-        if result:
-            summary['price_data'] = dict(result)
-        
-        # Resumo de sinais
-        if symbol:
-            signals_query = """
-            SELECT 
-                COUNT(*) as total,
-                COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active,
-                COUNT(CASE WHEN status = 'HIT_TARGET' THEN 1 END) as profitable,
-                COUNT(CASE WHEN status = 'HIT_STOP' THEN 1 END) as stopped
-            FROM trading_signals 
-            WHERE symbol = ?
-            """
-            params = (symbol,)
-        else:
-            signals_query = """
-            SELECT 
-                COUNT(*) as total,
-                COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active,
-                COUNT(CASE WHEN status = 'HIT_TARGET' THEN 1 END) as profitable,
-                COUNT(CASE WHEN status = 'HIT_STOP' THEN 1 END) as stopped,
-                COUNT(DISTINCT symbol) as unique_symbols
-            FROM trading_signals
-            """
-            params = ()
-        
-        result = self._execute_with_retry(signals_query, params, 'one')
-        if result:
-            summary['signals'] = dict(result)
-        
-        return summary
-    
-    # ==================== BACKUP E RESTORE ====================
-    
-    def create_backup(self, backup_path: Optional[str] = None) -> str:
-        """
-        Cria backup do banco de dados
-        
-        Args:
-            backup_path: Caminho para o backup (opcional)
-            
-        Returns:
-            Caminho do arquivo de backup criado
-        """
-        if backup_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_path = f"data/backup_trading_system_{timestamp}.db"
-        
-        backup_path = Path(backup_path)
-        backup_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        try:
-            with self._lock:
-                conn = self._get_connection()
-                
-                # Cria backup usando SQLite backup API
-                backup_conn = sqlite3.connect(str(backup_path))
-                conn.backup(backup_conn)
-                backup_conn.close()
-            
-            logger.info(f"Backup criado: {backup_path}")
-            return str(backup_path)
-            
-        except Exception as e:
-            logger.error(f"Erro ao criar backup: {e}")
-            raise
-    
-    def restore_backup(self, backup_path: str) -> bool:
-        """
-        Restaura banco de dados de um backup
-        
-        Args:
-            backup_path: Caminho do arquivo de backup
-            
-        Returns:
-            True se restaurado com sucesso
-        """
-        backup_path = Path(backup_path)
-        
-        if not backup_path.exists():
-            logger.error(f"Arquivo de backup não encontrado: {backup_path}")
-            return False
-        
-        try:
-            # Fecha conexões existentes
-            if hasattr(self._local, 'connection') and self._local.connection:
-                self._local.connection.close()
-                self._local.connection = None
-            
-            # Substitui arquivo atual
-            import shutil
-            shutil.copy2(backup_path, self.db_path)
-            
-            logger.info(f"Banco restaurado de: {backup_path}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Erro ao restaurar backup: {e}")
-            return False
     
     # ==================== HEALTH CHECK ====================
     

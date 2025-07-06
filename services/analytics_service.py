@@ -1,6 +1,7 @@
-# services/analytics_service.py
+# services/analytics_service.py - Corrigido
 from .base_service import BaseService
 from typing import Dict, Any, Optional
+from datetime import datetime
 
 class AnalyticsService(BaseService):
     """Serviço para analytics e relatórios"""

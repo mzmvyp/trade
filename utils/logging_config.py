@@ -1,4 +1,4 @@
-# utils/logging_config.py - Configuração de Logging
+# utils/logging_config.py - Configuração de Logging (CORRIGIDO)
 import logging
 import logging.handlers
 import sys
@@ -390,3 +390,76 @@ def create_audit_logger() -> logging.Logger:
         audit_file,
         maxBytes=10*1024*1024,  # 10MB
         backupCount=10,  # Mais backups para auditoria
+        encoding='utf-8'
+    )
+    
+    # Formato detalhado para auditoria
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(message)s",
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    handler.setFormatter(formatter)
+    
+    audit_logger.addHandler(handler)
+    audit_logger.setLevel(logging.INFO)
+    
+    # Evita propagação para root logger
+    audit_logger.propagate = False
+    
+    return audit_logger
+
+
+def get_system_memory_usage():
+    """
+    Obtém uso de memória do sistema (com fallback se psutil não disponível)
+    
+    Returns:
+        Dict com informações de memória ou None se não disponível
+    """
+    try:
+        import psutil
+        import os
+        
+        process = psutil.Process(os.getpid())
+        memory_info = process.memory_info()
+        
+        return {
+            'memory_rss_mb': memory_info.rss / (1024 * 1024),
+            'memory_vms_mb': memory_info.vms / (1024 * 1024),
+            'cpu_percent': process.cpu_percent(),
+            'threads_count': process.num_threads(),
+            'psutil_available': True
+        }
+        
+    except ImportError:
+        # psutil não está disponível
+        return {
+            'psutil_available': False,
+            'message': 'psutil não instalado - estatísticas de memória indisponíveis'
+        }
+    except Exception as e:
+        return {
+            'psutil_available': False,
+            'error': str(e)
+        }
+
+
+# Configuração padrão para desenvolvimento
+def setup_development_logging():
+    """Configura logging para ambiente de desenvolvimento"""
+    return setup_colored_logging(
+        level="DEBUG",
+        log_file="logs/development.log",
+        console_colors=True
+    )
+
+
+# Configuração padrão para produção
+def setup_production_logging():
+    """Configura logging para ambiente de produção"""
+    return setup_logging(
+        level="INFO",
+        log_file="logs/production.log",
+        console_enabled=True,
+        file_enabled=True
+    )

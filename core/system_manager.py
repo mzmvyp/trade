@@ -1,11 +1,11 @@
-# core/system_manager.py - Gerenciador Central do Sistema
+# core/system_manager.py - Gerenciador Central do Sistema (COMPLETO)
 import logging
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 
 from .trading_pair import trading_pair_manager
 from .data_streamer import multi_pair_streamer
-from .database_manager import get_database_manager
+from .data_manager import get_database_manager
 from config.settings import Config
 
 logger = logging.getLogger(__name__)
@@ -459,7 +459,7 @@ class SystemManager:
                 self.is_running = False
             
             # Cleanup dos componentes
-            self.data_streamer.cleanup()
+            self.data_streamer.shutdown()
             
             logger.info("SystemManager finalizado com sucesso")
             

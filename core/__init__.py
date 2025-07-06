@@ -1,4 +1,4 @@
-# core/__init__.py  
+# core/__init__.py - Usando data_manager.py existente
 """
 Módulo core - Componentes principais do sistema
 """
@@ -21,10 +21,10 @@ except ImportError as e:
     multi_pair_streamer = None
 
 try:
-    from .database_manager import get_database_manager
+    from .data_manager import get_database_manager
 except ImportError as e:
     import logging
-    logging.getLogger(__name__).warning(f"Import warning database_manager: {e}")
+    logging.getLogger(__name__).warning(f"Import warning data_manager: {e}")
     get_database_manager = None
 
 try:
